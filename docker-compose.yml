@@ -1,35 +1,42 @@
 version: '3.2'
 services:
-  nginx: #webserver
+  nginx: # webserver
     build:
       context: ./
-      dockerfile: docker/nginx.docker
+      dockerfile: docker/conf/nginx.docker
     volumes:
-      - ./:/var/www
+      - ./:/var/www/html
     ports:
-      - "8080:80"
+      - "8081:80"
+    restart: always
     depends_on:
       - php-fpm
+      - db
 
   php-fpm:
     build:
       context: ./
-      dockerfile: docker/php-fpm.docker
+      dockerfile: docker/conf/php-fpm.docker
+    restart: always
     volumes:
-      - ./:/var/www
-    environment:
-      - "DB_PORT=5432"
-      - "DB_HOST=db"
-    depends_on:
-      - db
+      - ./:/var/www/html
+#    environment:
+#      - "DB_PORT=${DB_PORT}"
+#      - "DB_HOST=${DB_HOST}"
+#      - "DB_NAME=${DB_NAME}"
+#      - "DB_USER=${DB_USER}"
+#      - "DB_PASSWORD=${DB_PASSWORD}"
+
 
   db:
     image: postgres:14.1
-    volumes:
-      - ./storage/docker/postgres:/var/lib/postgresql/data
+    restart: always
+    #    volumes:
+    #      - ./storage/docker/postgres:/var/lib/postgresql/data
     environment:
-      - "POSTGRES_PASSWORD=root"
-      - "POSTGRES_USER=testuser"
-      - "POSTGRES_DB=testdb"
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USErmR}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
       - "54321:5432"
 
