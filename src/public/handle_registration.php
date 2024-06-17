@@ -13,17 +13,17 @@ $errors = [];
 
 // Проверка поля name
 if (empty($name)) {
-    $errors[] = 'Поле "Имя" обязательно для заполнения.';
+    $errors['name'] = 'Поле "Имя" обязательно для заполнения.';
 }
 
 // Проверка поля email
 if (empty($email)) {
-    $errors[] = 'Поле "Email" обязательно для заполнения.';
+    $errors['email'] = 'Поле "Email" обязательно для заполнения.';
 }
 
 // Проверка поля password
 if (empty($password)) {
-    $errors[] = 'Поле "Пароль" обязательно для заполнения.';
+    $errors['psw'] = 'Поле "Пароль" обязательно для заполнения.';
 }
 
 // Проверка поля confirm_password
@@ -55,36 +55,35 @@ if ($password !== $confirm_password) {
 }
 
 // Если есть ошибки, отображаем их и прекращаем выполнение скрипта
-if (!empty($errors)) {
-    foreach ($errors as $error) {
-        echo "<p>$error</p>";
-    }
-    exit;
-}
+if (empty($errors)) {
 
 // Подключение к базе данных
-$pdo = new PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
+    $pdo = new PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
 
 // Проверка уникальности email
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
-$stmt->execute([':email' => $email]);
-$count = $stmt->fetchColumn();
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = :email");
+    $stmt->execute([':email' => $email]);
+    $count = $stmt->fetchColumn();
 
-if ($count > 0) {
-    die('Пользователь с таким email уже существует.');
-}
+    if ($count > 0) {
+        die('Пользователь с таким email уже существует.');
+    }
 
 // Подготовка и выполнение запроса на вставку данных
-$stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-$stmt->execute([':name' => $name, ':email' => $email, ':password' => password_hash($password, PASSWORD_DEFAULT)]);
+    $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+    $stmt->execute([':name' => $name, ':email' => $email, ':password' => password_hash($password, PASSWORD_DEFAULT)]);
 
 // Получение ID последней вставленной записи
-$lastInsertId = $pdo->lastInsertId();
+    $lastInsertId = $pdo->lastInsertId();
 
 // Выполнение запроса на выборку данных только что сохраненного пользователя
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
-$stmt->execute([':id' => $lastInsertId]);
-$result = $stmt->fetch();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->execute([':id' => $lastInsertId]);
+    $result = $stmt->fetch();
 
 // Вывод результата
-print_r($result);
+    print_r($result);
+}
+
+require_once './get_registration.phtml'
+?>
