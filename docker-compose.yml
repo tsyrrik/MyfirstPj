@@ -19,6 +19,7 @@ services:
       dockerfile: docker/conf/php-fpm.docker
     restart: always
     volumes:
+      - ./docker/conf/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./:/var/www/html
 #    environment:
 #      - "DB_PORT=${DB_PORT}"
