@@ -11,9 +11,24 @@ $confirm_password = $_POST['psw-repeat'];
 // Массив для хранения ошибок
 $errors = [];
 
-// Проверка на пустоту
-if (!$name || !$email || !$password || !$confirm_password) {
-    $errors[] = 'Все поля обязательны для заполнения.';
+// Проверка поля name
+if (empty($name)) {
+    $errors[] = 'Поле "Имя" обязательно для заполнения.';
+}
+
+// Проверка поля email
+if (empty($email)) {
+    $errors[] = 'Поле "Email" обязательно для заполнения.';
+}
+
+// Проверка поля password
+if (empty($password)) {
+    $errors[] = 'Поле "Пароль" обязательно для заполнения.';
+}
+
+// Проверка поля confirm_password
+if (empty($confirm_password)) {
+    $errors[] = 'Поле "Подтверждение пароля" обязательно для заполнения.';
 }
 
 // Проверка на количество символов
