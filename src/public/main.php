@@ -1,3 +1,9 @@
 <?php
- $userId = $_COOKIE["userId"];
- echo $userId;
+session_start();
+
+if (isset($_SESSION['userId'])) {
+    require_once './catalog.php';
+} else {
+    http_response_code(403);
+
+}

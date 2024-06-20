@@ -43,10 +43,10 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
                 session_start();
                 $_SESSION['userId'] = $user['id'];
                 $_SESSION['userName'] = $user['name'];
-                // Установка куки
-                setcookie("userId", $user['id']);
-                setcookie("userName", $user['name']);
-                echo "OK, " . htmlspecialchars($user['name']) . "!";
+//                // Установка куки
+//                setcookie("userId", $user['id']);
+//                setcookie("userName", $user['name']);
+               echo "OK, " . htmlspecialchars($user['name']) . "!";
             } else {
                 $errors['password'] = 'Введен неверный логин или пароль';
             }
