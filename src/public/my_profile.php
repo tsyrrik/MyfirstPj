@@ -13,7 +13,7 @@ function getDatabaseConnection() {
 // Проверка, авторизован ли пользователь
 if (!isset($_SESSION['userId'])) {
     http_response_code(403);
-    die('Нет доступа 403 ошибка');
+    require_once './403.php';;
 }
 
 // Подключение к базе данных

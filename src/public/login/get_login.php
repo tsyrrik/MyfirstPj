@@ -7,8 +7,7 @@
         <h2 class="center flex roboto-thin">One account</h2>
         <h2 class="center flex roboto-thin">Many possibilities</h2>
     </div>
-
-    <form action="handle_login.php" method="POST">
+    <form action="/login" method="POST">
         <section class="form">
             <input class="center flex roboto-thin" type="email" name="email" id="email" placeholder="E-mail address or phone number">
             <?php if (isset($errors['email'])): ?>
@@ -30,7 +29,6 @@
                 </div>
             </div>
         </section>
-
         <section class="buttons">
             <button class="center flex button button-primary" type="submit">Sign in</button>
             <button class="center flex button button-secondary" type="submit">
@@ -53,12 +51,10 @@
                     </g>
                 </svg>Sign in with Google</button>
         </section>
-
         <section class="not-member center flex">
             <span class="text-size-10 roboto-thin"> Not a member yet? <a class="link" href="">Sign up</a></span>
         </section>
     </form>
-
 </section>
 </body>
 <style>
@@ -76,10 +72,8 @@
     .card{
         display: grid;
         background-color: #ffffff;
-
         box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
         border-radius: 10px;
-
         max-width: 375px;
         width: 100%;
         height: 100%;

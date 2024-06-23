@@ -46,7 +46,7 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 //                // Установка куки
 //                setcookie("userId", $user['id']);
 //                setcookie("userName", $user['name']);
-               echo "OK, " . htmlspecialchars($user['name']) . "!";
+                echo "OK, " . htmlspecialchars($user['name']) . "!";
             } else {
                 $errors['password'] = 'Введен неверный логин или пароль';
             }
@@ -57,5 +57,5 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
 } else {
     $errors['form'] = 'Пожалуйста, заполните форму для входа.';
 }
-require_once './get_login.php';
+require_once __DIR__ . '/get_login.php';
 ?>

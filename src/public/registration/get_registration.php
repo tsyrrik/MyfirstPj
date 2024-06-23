@@ -1,5 +1,4 @@
-
-<form action="handle_registration.php" method="POST">
+<form action="/registration" method="POST">
     <div class="container">
         <h1>Register</h1>
         <p>Please fill in this form to create an account.</p>
@@ -13,7 +12,7 @@
 
         <label for="email"><b>Email</b></label>
         <?php if (isset($errors['email'])): ?>
-        <label><?php echo $errors['email']; ?></label>
+            <label><?php echo $errors['email']; ?></label>
         <?php endif; ?>
         <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
