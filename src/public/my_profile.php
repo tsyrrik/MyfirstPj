@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 function getDatabaseConnection() {
     try {
         $pdo = new PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
@@ -175,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .movebtnre {
-            border: 2px solid #ff5501;
+            border: 2px solid #ef9e75;
             box-shadow: inset 0 0 0 0 #ff5501;
             color: #ff5501;
         }
@@ -209,13 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <form class="form" method="POST">
     <h2>User Profile</h2>
-    <div class="form-group">
-        <label for="id">ID:</label>
-        <div class="relative">
-            <input class="form-control" id="id" name="id" type="text" readonly value="<?php echo htmlspecialchars($user['id'] ?? ''); ?>">
-            <i class="fa fa-id-badge"></i>
-        </div>
-    </div>
     <div class="form-group">
         <label for="name">Name:</label>
         <div class="relative">

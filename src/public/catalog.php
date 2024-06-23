@@ -26,7 +26,7 @@ $products = $stmt->fetchAll();
                     <div class="card-header">
                         Hit!
                     </div>
-                    <img class="card-img-top" src="--><?php echo htmlspecialchars($product['image_url']); ?><!--" alt="Card image">-->
+                    <img class="card-img-top" src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="Card image">
                     <div class="card-body">
                         <p class="card-text text-muted"><?php echo htmlspecialchars($product['description']); ?></p>
                         <a href="#"><h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5></a>
