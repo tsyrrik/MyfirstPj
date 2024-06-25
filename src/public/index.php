@@ -7,10 +7,10 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 if ($requestUri === '/registration') {
     if ($requestMethod === 'GET') {
         // Если метод GET, подключаем форму регистрации
-        require_once './registration/get_registration.php';
+        require_once '../View/get_registration.php';
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные регистрации
-        require_once './registration/handle_registration.php';
+        require_once '../Class/User.php';
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -20,10 +20,10 @@ if ($requestUri === '/registration') {
 elseif ($requestUri === '/login') {
     if ($requestMethod === 'GET') {
         // Если метод GET, подключаем форму входа
-        require_once './login/get_login.php';
+        require_once '../View/get_login.php';
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные входа
-        require_once './login/handle_login.php';
+        require_once '../Class/User.php';
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -33,10 +33,10 @@ elseif ($requestUri === '/login') {
 elseif ($requestUri === '/my_profile') {
     if ($requestMethod === 'GET') {
         // Если метод GET, отображаем профиль пользователя
-        require_once './my_profile.php';
+        require_once '../View/my_profile.php';
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обновляем данные профиля пользователя
-        require_once './my_profile.php';
+        require_once '../View/my_profile.php';
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -46,7 +46,7 @@ elseif ($requestUri === '/my_profile') {
 elseif ($requestUri === '/catalog') {
     if ($requestMethod === 'GET') {
         // Если метод GET, отображаем каталог продуктов
-        require_once './catalog.php';
+        require_once '../View/catalog.php';
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -55,7 +55,7 @@ elseif ($requestUri === '/catalog') {
 // Если маршрут не найден, возвращаем код ошибки 404 и подключаем страницу ошибки
 else {
     http_response_code(404);
-    require_once './404.php';
+    require_once '../View/404.php';
 }
 
 ?>
