@@ -11,6 +11,8 @@ if ($requestUri === '/registration') {
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные регистрации
         require_once '../Class/User.php';
+        $obj = new User();
+        $obj->registrate();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -24,6 +26,8 @@ elseif ($requestUri === '/login') {
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные входа
         require_once '../Class/User.php';
+        $obj = new User();
+        $obj->login();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -31,22 +35,17 @@ elseif ($requestUri === '/login') {
 }
 // Обработка маршрута для профиля пользователя
 elseif ($requestUri === '/my_profile') {
-    if ($requestMethod === 'GET') {
-        // Если метод GET, отображаем профиль пользователя
-        require_once '../View/my_profile.php';
-    } elseif ($requestMethod === 'POST') {
-        // Если метод POST, обновляем данные профиля пользователя
-        require_once '../View/my_profile.php';
-    } else {
-        // Если метод HTTP не поддерживается, выводим сообщение об ошибке
-        echo "HTTP метод $requestMethod не поддерживается";
-    }
+    require_once '../Class/User.php';
+    $obj = new User();
+    $obj->showProfile();
 }
 // Обработка маршрута для каталога продуктов
 elseif ($requestUri === '/catalog') {
     if ($requestMethod === 'GET') {
         // Если метод GET, отображаем каталог продуктов
-        require_once '../View/catalog.php';
+        require_once '../Class/Product.php';
+        $product = new Product();
+        $product->showCatalog();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
         echo "HTTP метод $requestMethod не поддерживается";
@@ -57,5 +56,3 @@ else {
     http_response_code(404);
     require_once '../View/404.php';
 }
-
-?>
