@@ -132,7 +132,7 @@ class User
                     }
                 }
             } else {
-                $errors['form'] = 'Пожалуйста, заполните форму для входа.';
+                $errors['form'] = 'Заполните форму для входа.';
             }
             require_once __DIR__ . '/../View/get_login.php';
         }
