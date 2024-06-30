@@ -10,8 +10,8 @@ if ($requestUri === '/registration') {
         require_once '../View/get_registration.php';
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные регистрации
-        require_once '../Class/User.php';
-        $obj = new User();
+        require_once '../Controller/UserController.php';
+        $obj = new UserController();
         $obj->registrate();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
@@ -25,8 +25,8 @@ elseif ($requestUri === '/login') {
         require_once '../View/get_login.php';
     } elseif ($requestMethod === 'POST') {
         // Если метод POST, обрабатываем данные входа
-        require_once '../Class/User.php';
-        $obj = new User();
+        require_once '../Controller/UserController.php';
+        $obj = new UserController();
         $obj->login();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
@@ -35,16 +35,16 @@ elseif ($requestUri === '/login') {
 }
 // Обработка маршрута для профиля пользователя
 elseif ($requestUri === '/my_profile') {
-    require_once '../Class/User.php';
-    $obj = new User();
+    require_once '../Controller/UserController.php';
+    $obj = new UserController();
     $obj->showProfile();
 }
 // Обработка маршрута для каталога продуктов
 elseif ($requestUri === '/catalog') {
     if ($requestMethod === 'GET') {
         // Если метод GET, отображаем каталог продуктов
-        require_once '../Class/Product.php';
-        $product = new Product();
+        require_once '../Controller/ProductController.php';
+        $product = new ProductController();
         $product->showCatalog();
     } else {
         // Если метод HTTP не поддерживается, выводим сообщение об ошибке
