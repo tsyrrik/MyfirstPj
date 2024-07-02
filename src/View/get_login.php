@@ -1,3 +1,8 @@
+<a href="/catalog">Catalog</a>>
+<a href="/logout">Logout</a>>
+<a href="/my_profile">My profile</a>>
+
+
 <body class="center flex">
 <section class="card center">
     <div class="d-logo center flex">

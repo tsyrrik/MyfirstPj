@@ -2,15 +2,50 @@
 session_start(); // Начало сессии
 require_once '../Model/UserModel.php';
 
-class UserController {
-    private $userModel;
+class UserController
+{
+    private UserModel $userModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->userModel = new UserModel();
     }
 
+    // Функция регистрации
+    public function registrate()
+    {
+        // Валидация данных
+        $errors = $this->validateRegistration($_POST);
+        if (empty($errors)) {
+            // Получение данных из POST-запроса
+            $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $password = filter_input(INPUT_POST, 'psw', FILTER_SANITIZE_SPECIAL_CHARS);
+            $confirmPassword = filter_input(INPUT_POST, 'psw-repeat', FILTER_SANITIZE_SPECIAL_CHARS);
+
+            // Проверка существования email
+            if ($this->userModel->checkEmailExists($email)) {
+                $errors['email'] = 'Пользователь с таким email уже существует.';
+            } else {
+                // Создание пользователя
+                $this->userModel->create($name, $email, $password);
+
+                // Получение данных только что сохраненного пользователя
+                $user = $this->userModel->getByEmail($email);
+
+                // Перенаправление на страницу входа
+                header("Location: /login");
+                exit();
+            }
+        }
+
+        // Если есть ошибки, подключаем форму регистрации с ошибками
+        require_once '../View/get_registration.php';
+    }
+
     // Метод для валидации данных регистрации
-    private function validateRegistration(array $data): array {
+    private function validateRegistration(array $data): array
+    {
         $errors = [];
 
         // Проверка поля name, -> проверка на количество символов
@@ -42,92 +77,63 @@ class UserController {
         return $errors;
     }
 
-    // Функция регистрации
-    public function registrate() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['name']) && isset($_POST['email']) && isset($_POST['psw']) && isset($_POST['psw-repeat'])) {
-                // Получение данных из POST-запроса
-                $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
-                $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-                $password = filter_input(INPUT_POST, 'psw', FILTER_SANITIZE_SPECIAL_CHARS);
-                $confirmPassword = filter_input(INPUT_POST, 'psw-repeat', FILTER_SANITIZE_SPECIAL_CHARS);
-
-                // Валидация данных
-                $errors = $this->validateRegistration([
-                    'name' => $name,
-                    'email' => $email,
-                    'psw' => $password,
-                    'psw-repeat' => $confirmPassword
-                ]);
-
-                // Если нет ошибки, выполняем подключение к БД
-                if (empty($errors)) {
-                    // Проверка уникальности email
-                    if ($this->userModel->checkEmailExists($email)) {
-                        $errors['email'] = 'Пользователь с таким email уже существует.';
-                    } else {
-                        // Создание пользователя
-                        $this->userModel->create($name, $email, $password);
-
-                        // Получение данных только что сохраненного пользователя
-                        $user = $this->userModel->getByEmail($email);
-
-                        // Вывод результата
-                        print_r($user);
-                    }
-                }
-                require_once '../View/get_registration.php';
-            }
-        }
-    }
-
     // Функция авторизации
-    public function login() {
+    public function login()
+    {
         $errors = [];
 
-        // Проверка наличия ключей в POST-запросе
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (isset($_POST['email']) && isset($_POST['password'])) {
-                // Получение данных из POST-запроса
-                $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-                $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+        if (isset($_POST['email']) && isset($_POST['password'])) {
+            // Получение данных из POST-запроса
+            $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+            $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
 
-                // Валидация данных (например, проверка на пустые поля)
-                if (empty($email)) {
-                    $errors['email'] = 'Поле "Email" обязательно для заполнения.';
-                }
-                if (empty($password)) {
-                    $errors['password'] = 'Поле "Пароль" обязательно для заполнения.';
-                }
-
-                // Если нет ошибок, выполняем подключение к БД и проверку пользователя
-                if (empty($errors)) {
-                    // Проверка существования пользователя
-                    $user = $this->userModel->getByEmail($email);
-
-                    if ($user) {
-                        // Проверка пароля
-                        if (password_verify($password, $user['password'])) {
-                            // Успешный вход
-                            $_SESSION['userId'] = $user['id'];
-                            $_SESSION['userName'] = $user['name'];
-                            echo "OK, " . htmlspecialchars($user['name']) . "!";
-                        } else {
-                            $errors['password'] = 'Введен неверный логин или пароль';
-                        }
-                    } else {
-                        $errors['email'] = 'Введен неверный логин или пароль';
-                    }
-                }
-            } else {
-                $errors['form'] = 'Заполните форму для входа.';
+            // Валидация данных (например, проверка на пустые поля)
+            if (empty($email)) {
+                $errors['email'] = 'Поле "Email" обязательно для заполнения.';
             }
-            require_once '../View/get_login.php';
+            if (empty($password)) {
+                $errors['password'] = 'Поле "Пароль" обязательно для заполнения.';
+            }
+
+            // Если нет ошибок, выполняем подключение к БД и проверку пользователя
+            if (empty($errors)) {
+                // Проверка существования пользователя
+                $user = $this->userModel->getByEmail($email);
+
+                if ($user) {
+                    // Проверка пароля
+                    if (password_verify($password, $user['password'])) {
+                        // Успешный вход
+                        $_SESSION['userId'] = $user['id'];
+                        $_SESSION['userName'] = $user['name'];
+                        echo "OK, " . htmlspecialchars($user['name']) . "!";
+                    } else {
+                        $errors['password'] = 'Введен неверный логин или пароль';
+                    }
+                } else {
+                    $errors['email'] = 'Введен неверный логин или пароль';
+                }
+            }
+        } else {
+            $errors['form'] = 'Заполните форму для входа.';
         }
+        require_once '../View/get_login.php';
+    }
+
+    // Выход из текущей сессии
+    public function logout()
+    {
+        // Завершите сессию пользователя
+        session_unset();
+        session_destroy();
+
+        // Перенаправьте пользователя на страницу входа или главную страницу
+        header('Location: /login');
     }
 
     // Новый метод для отображения профиля пользователя
-    public function showProfile() {
+    public function showProfile()
+    {
         // Проверка, авторизован ли пользователь
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);

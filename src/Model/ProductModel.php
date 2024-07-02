@@ -1,16 +1,9 @@
 <?php
-
-class ProductModel {
-    private $pdo;
-
-    public function __construct() {
-        $this->pdo = new \PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-
+require_once 'Model.php';
+class ProductModel extends Model
+{
     public function getAllProducts(): array {
         $stmt = $this->pdo->query("SELECT * FROM products");
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-
 }

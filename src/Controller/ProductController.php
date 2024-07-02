@@ -3,9 +3,10 @@ require_once __DIR__ . '/../Model/ProductModel.php';
 
 class ProductController
 {
-    private $productModel;
+    private ProductModel $productModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->productModel = new ProductModel();
     }
 

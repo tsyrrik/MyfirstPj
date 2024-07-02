@@ -1,21 +1,7 @@
-<?php
-function getDatabaseConnection() {
-    try {
-        $pdo = new PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        return $pdo;
-    } catch (PDOException $e) {
-        die('Ошибка подключения к базе данных: ' . $e->getMessage());
-    }
-}
+<a href="/add-product">Add product</a>>
+<a href="/logout">Logout</a>>
+<a href="/my_profile">My profile</a>>
 
-// Подключение к базе данных
-$pdo = getDatabaseConnection();
-
-// Извлечение данных о продуктах
-$stmt = $pdo->query('SELECT * FROM products');
-$products = $stmt->fetchAll();
-?>
 
 <div class="container">
     <h3>Catalog</h3>

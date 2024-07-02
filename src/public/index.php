@@ -51,6 +51,35 @@ elseif ($requestUri === '/catalog') {
         echo "HTTP метод $requestMethod не поддерживается";
     }
 }
+// Обработка маршрута для добавления товара в корзину
+elseif ($requestUri === '/add-product') {
+    if ($requestMethod === 'GET') {
+        // Если метод GET, отображаем форму добавления товара
+        require_once '../Controller/CartController.php';
+        $cartController = new CartController();
+        $cartController->getAddProductForm();
+    } elseif ($requestMethod === 'POST') {
+        // Если метод POST, добавляем товар в корзину
+        require_once '../Controller/CartController.php';
+        $cartController = new CartController();
+        $cartController->addProduct();
+    } else {
+        // Если метод HTTP не поддерживается, выводим сообщение об ошибке
+        echo "HTTP метод $requestMethod не поддерживается";
+    }
+}
+// Обработка маршрута для выхода из системы
+elseif ($requestUri === '/logout') {
+    if ($requestMethod === 'GET') {
+        // Если метод GET, выполняем выход
+        require_once '../Controller/UserController.php';
+        $obj = new UserController();
+        $obj->logout();
+    } else {
+        // Если метод HTTP не поддерживается, выводим сообщение об ошибке
+        echo "HTTP метод $requestMethod не поддерживается";
+    }
+}
 // Если маршрут не найден, возвращаем код ошибки 404 и подключаем страницу ошибки
 else {
     http_response_code(404);

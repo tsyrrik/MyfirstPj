@@ -1,13 +1,7 @@
 <?php
-
-class UserModel {
-    private $pdo;
-
-    public function __construct() {
-        $this->pdo = new \PDO("pgsql:host=db; port=5432; dbname=dbname", 'dbuser', '123');
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-
+require_once 'Model.php';
+class UserModel extends Model
+{
     public function getByEmail(string $email): array {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);

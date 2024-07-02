@@ -1,3 +1,8 @@
+<a href="/catalog">Catalog</a>>
+<a href="/logout">Logout</a>>
+<a href="/add-product">Add product</a>>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
