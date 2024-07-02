@@ -1,6 +1,7 @@
 <a href="/catalog">Catalog</a>
-<a href="/logout">Logout</a>
 <a href="/my_profile">My profile</a>
+<a href="/cart">Cart</a>
+<a href="/logout">Logout</a>
 
 <form action="/add-product" method="POST">
     <div class="container">

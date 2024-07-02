@@ -26,7 +26,7 @@ class CartController
             require_once '../View/403.php';
             return;
         }
-
+        // Валидация данных
         $userId = $_SESSION['userId'];
         $productId = filter_input(INPUT_POST, 'product_id', FILTER_VALIDATE_INT);
         $count = filter_input(INPUT_POST, 'count', FILTER_VALIDATE_INT);
@@ -42,5 +42,22 @@ class CartController
         } else {
             echo "Неверный идентификатор продукта или его количество";
         }
+    }
+
+    // Метод для отображения содержимого корзины
+    public function showCart()
+    {
+        session_start();
+        if (!isset($_SESSION['userId'])) {
+            // Если пользователь не авторизован, возвращаем код ошибки 403 и подключаем файл с ошибкой доступа
+            http_response_code(403);
+            require_once '../View/403.php';
+            return;
+        }
+
+        $userId = $_SESSION['userId'];
+        $cartItems = $this->cartModel->getCartByUserId($userId);
+
+        require_once '../View/cart.php';
     }
 }

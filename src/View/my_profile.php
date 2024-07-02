@@ -1,7 +1,7 @@
-<a href="/catalog">Catalog</a>>
-<a href="/logout">Logout</a>>
-<a href="/add-product">Add product</a>>
-
+<a href="/catalog">Catalog</a>
+<a href="/cart">Cart</a>
+<a href="/add-product">Add product</a>
+<a href="/logout">Logout</a>
 
 <!DOCTYPE html>
 <html lang="en">

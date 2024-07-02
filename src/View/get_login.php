@@ -1,6 +1,6 @@
-<a href="/catalog">Catalog</a>>
-<a href="/logout">Logout</a>>
-<a href="/my_profile">My profile</a>>
+<a href="/catalog">Catalog</a>
+<a href="/my_profile">My profile</a>
+<a href="/logout">Logout</a>
 
 
 <body class="center flex">
