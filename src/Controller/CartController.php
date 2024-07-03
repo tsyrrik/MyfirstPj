@@ -1,13 +1,13 @@
 <?php
-require_once '../Model/CartModel.php';
+require_once '../Model/User_Products.php';
 
 class CartController
 {
-    private CartModel $cartModel;
+    private User_Products $userProducts;
 
     public function __construct()
     {
-        $this->cartModel = new CartModel();
+        $this->userProducts = new User_Products();
     }
 
     // Метод для отображения формы добавления продукта
@@ -26,22 +26,43 @@ class CartController
             require_once '../View/403.php';
             return;
         }
-        // Валидация данных
         $userId = $_SESSION['userId'];
         $productId = filter_input(INPUT_POST, 'product_id', FILTER_VALIDATE_INT);
         $count = filter_input(INPUT_POST, 'count', FILTER_VALIDATE_INT);
 
-        if ($productId && $count) {
-            try {
-                // Добавляем продукт в корзину
-                $this->cartModel->addProductToCart($userId, $productId, $count);
-                echo "Продукт успешно добавлен в корзину";
-            } catch (Exception $e) {
-                echo "Ошибка при добавлении продукта в корзину: " . $e->getMessage();
-            }
-        } else {
-            echo "Неверный идентификатор продукта или его количество";
+        // Валидация входных данных
+        $error = $this->validateAddProduct($userId, $productId, $count);
+
+        if ($error) {
+            echo $error;
+            return;
         }
+
+        // Добавляем продукт в корзину
+        $success = $this->userProducts->addProductToCart($userId, $productId, $count);
+        if ($success) {
+            echo "Продукт успешно добавлен в корзину";
+        } else {
+            echo "Ошибка при добавлении продукта в корзину";
+        }
+    }
+
+    // Метод для валидации входных данных
+    private function validateAddProduct($userId, $productId, $count)
+    {
+        if ($userId <= 0) {
+            return "Неверный идентификатор пользователя";
+        }
+        if ($productId <= 0) {
+            return "Неверный идентификатор продукта";
+        }
+        if ($count <= 0) {
+            return "Неверное количество продукта";
+        }
+        if (!$this->userProducts->productExists($productId)) {
+            return "Продукт с данным идентификатором не существует";
+        }
+        return null;
     }
 
     // Метод для отображения содержимого корзины
@@ -56,8 +77,9 @@ class CartController
         }
 
         $userId = $_SESSION['userId'];
-        $cartItems = $this->cartModel->getCartByUserId($userId);
+        $cartItems = $this->userProducts->getCartByUserId($userId);
 
         require_once '../View/cart.php';
     }
 }
+

@@ -1,8 +1,3 @@
-<a href="/catalog">Catalog</a>
-<a href="/add-product">Logout</a>
-<a href="/my_profile">My profile</a>
-<a href="/logout">Logout</a>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,6 +25,22 @@
         .chkbx {
             margin-right: 10px;
         }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .cart-item img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .cart-item h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .cart-item p {
+            margin: 5px 0;
+        }
         .checkout {
             display: block;
             text-align: center;
@@ -47,16 +58,25 @@
     </style>
 </head>
 <body>
+<a href="/catalog">Catalog</a>
+<a href="/add-product">Add Product</a>
+<a href="/my_profile">My profile</a>
+<a href="/logout">Logout</a>
 <div class="wrapper">
     <h1 class="heading">CART <i class="fa-solid fa-cart-shopping"></i></h1>
     <?php if (empty($cartItems)): ?>
         <p>Your cart is empty.</p>
     <?php else: ?>
         <?php foreach ($cartItems as $item): ?>
-            <label>
+            <div class="cart-item">
                 <input class="chkbx" type="checkbox"/>
-                Product ID: <?php echo htmlspecialchars($item['product_id']); ?>, Count: <?php echo htmlspecialchars($item['count']); ?>
-            </label><br>
+                <img src="<?php echo htmlspecialchars($item['img_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                <div>
+                    <h2><?php echo htmlspecialchars($item['name']); ?></h2>
+                    <p>Цена: <?php echo htmlspecialchars($item['price']); ?> руб.</p>
+                    <p>Количество: <?php echo htmlspecialchars($item['count']); ?></p>
+                </div>
+            </div>
         <?php endforeach; ?>
     <?php endif; ?>
     <p class="checkout">Checkout→</p>
