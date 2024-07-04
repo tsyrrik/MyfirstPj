@@ -1,14 +1,12 @@
 <?php
-session_start(); // Начало сессии
-require_once '../Model/UserModel.php';
 
 class UserController
 {
-    private UserModel $userModel;
+    private User $user;
 
     public function __construct()
     {
-        $this->userModel = new UserModel();
+        $this->user = new User();
     }
 
     // Функция регистрации
@@ -24,14 +22,11 @@ class UserController
             $confirmPassword = filter_input(INPUT_POST, 'psw-repeat', FILTER_SANITIZE_SPECIAL_CHARS);
 
             // Проверка существования email
-            if ($this->userModel->checkEmailExists($email)) {
+            if ($this->user->checkEmailExists($email)) {
                 $errors['email'] = 'Пользователь с таким email уже существует.';
             } else {
                 // Создание пользователя
-                $this->userModel->create($name, $email, $password);
-
-                // Получение данных только что сохраненного пользователя
-                $user = $this->userModel->getByEmail($email);
+                $this->user->create($name, $email, $password);
 
                 // Перенаправление на страницу входа
                 header("Location: /login");
@@ -80,6 +75,8 @@ class UserController
     // Функция авторизации
     public function login()
     {
+        session_start(); // Начало сессии для авторизации
+
         $errors = [];
 
         if (isset($_POST['email']) && isset($_POST['password'])) {
@@ -98,7 +95,7 @@ class UserController
             // Если нет ошибок, выполняем подключение к БД и проверку пользователя
             if (empty($errors)) {
                 // Проверка существования пользователя
-                $user = $this->userModel->getByEmail($email);
+                $user = $this->user->getByEmail($email);
 
                 if ($user) {
                     // Проверка пароля
@@ -123,6 +120,8 @@ class UserController
     // Выход из текущей сессии
     public function logout()
     {
+        session_start(); // Начало сессии для выхода
+
         // Завершите сессию пользователя
         session_unset();
         session_destroy();
@@ -134,6 +133,8 @@ class UserController
     // Новый метод для отображения профиля пользователя
     public function showProfile()
     {
+        session_start(); // Начало сессии для отображения профиля
+
         // Проверка, авторизован ли пользователь
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);
@@ -142,7 +143,7 @@ class UserController
         }
 
         $userId = $_SESSION['userId'];
-        $user = $this->userModel->getById($userId);
+        $user = $this->user->getById($userId);
 
         if (!$user) {
             die('Пользователь не найден');
@@ -163,10 +164,10 @@ class UserController
             }
 
             // Обновление данных пользователя в базе данных
-            $this->userModel->update($userId, $name, $lastName, $email);
+            $this->user->update($userId, $name, $lastName, $email);
 
             // Получение обновленных данных пользователя
-            $user = $this->userModel->getById($userId);
+            $user = $this->user->getById($userId);
 
             // Вывод сообщения об успешном обновлении профиля
             echo '<div class="thanks"><h4>Thank you!</h4><p><small>Your profile has been successfully updated.</small></p></div>';

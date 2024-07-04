@@ -1,13 +1,12 @@
 <?php
-require_once __DIR__ . '/../Model/ProductModel.php';
 
 class ProductController
 {
-    private ProductModel $productModel;
+    private Product $product;
 
     public function __construct()
     {
-        $this->productModel = new ProductModel();
+        $this->product = new Product();
     }
 
     // Метод для отображения каталога продуктов
@@ -19,7 +18,7 @@ class ProductController
         // Проверка, авторизован ли пользователь
         if (isset($_SESSION['userId'])) {
             // Получение списка продуктов из модели
-            $products = $this->productModel->getAllProducts();
+            $products = $this->product->getAllProducts();
 
             // Подключение файла с каталогом продуктов и передача данных
             require_once __DIR__ . '/../View/catalog.php';
