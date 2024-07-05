@@ -13,7 +13,7 @@ $func = function (string $className) {
             require_once $file;
             return;
         }
-    }
+Й    }
 };
  spl_autoload_register($func);
 
