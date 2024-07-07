@@ -1,21 +1,37 @@
 <?php
+
+use Controller\CartController;
+use Controller\ProductController;
+use Controller\UserController;
+
 // Получаем URI запроса и метод HTTP
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 // Функция автозагрузки классов
-$func = function (string $className) {
-    // Преобразуем имя класса в путь к файлу
-    $directories = ['../Controller', '../Model'];
-    foreach ($directories as $directory) {
-        $file = $directory . '/' . $className . '.php';
-        if (file_exists($file)) {
-            require_once $file;
-            return;
+spl_autoload_register(function ($class) {
+    $prefixes = [
+        'Controller\\' => __DIR__ . '/../Controller/',
+        'Model\\' => __DIR__ . '/../Model/',
+    ];
+
+    foreach ($prefixes as $prefix => $base_dir) {
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            continue;
         }
-Й    }
-};
- spl_autoload_register($func);
+
+        $relative_class = substr($class, $len);
+        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+
+        if (file_exists($file)) {
+            require $file;
+            return;
+        } else {
+            echo "File not found: $file<br>"; // Добавьте этот вывод для отладки
+        }
+    }
+});
 
 // Обработка маршрута для регистрации
 if ($requestUri === '/registration') {
@@ -61,15 +77,6 @@ elseif ($requestUri === '/add-product') {
     } elseif ($requestMethod === 'POST') {
         $cartController = new CartController();
         $cartController->addProduct();
-    } else {
-        echo "HTTP метод $requestMethod не поддерживается";
-    }
-}
-// Обработка маршрута для удаления товара из корзины
-elseif ($requestUri === '/remove-product') {
-    if ($requestMethod === 'POST') {
-        $cartController = new CartController();
-        $cartController->removeProduct();
     } else {
         echo "HTTP метод $requestMethod не поддерживается";
     }

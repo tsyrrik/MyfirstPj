@@ -1,5 +1,9 @@
 <?php
 
+namespace Controller;
+
+use Model\User;
+
 class UserController
 {
     private User $user;
@@ -10,23 +14,25 @@ class UserController
     }
 
     // Функция регистрации
-    public function registrate()
+    public function registrate(): void
     {
-        // Валидация данных
+        // Валидация данных регистрации
         $errors = $this->validateRegistration($_POST);
         if (empty($errors)) {
             // Получение данных из POST-запроса
             $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
             $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
             $password = filter_input(INPUT_POST, 'psw', FILTER_SANITIZE_SPECIAL_CHARS);
-            $confirmPassword = filter_input(INPUT_POST, 'psw-repeat', FILTER_SANITIZE_SPECIAL_CHARS);
 
             // Проверка существования email
             if ($this->user->checkEmailExists($email)) {
                 $errors['email'] = 'Пользователь с таким email уже существует.';
             } else {
+                // Хеширование пароля
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
                 // Создание пользователя
-                $this->user->create($name, $email, $password);
+                $this->user->create($name, $email, $hashedPassword);
 
                 // Перенаправление на страницу входа
                 header("Location: /login");
@@ -43,14 +49,14 @@ class UserController
     {
         $errors = [];
 
-        // Проверка поля name, -> проверка на количество символов
+        // Проверка поля name
         if (empty($data['name'])) {
             $errors['name'] = 'Поле "Имя" обязательно для заполнения.';
         } elseif (strlen($data['name']) < 2 || strlen($data['name']) > 255) {
             $errors['name'] = 'Имя должно содержать от 2 до 255 символов.';
         }
 
-        // Проверка поля email, -> проверка на количество символов, -> проверка на наличие @ в email
+        // Проверка поля email
         if (empty($data['email'])) {
             $errors['email'] = 'Поле "Email" обязательно для заполнения.';
         } elseif (strlen($data['email']) < 2 || strlen($data['email']) > 255) {
@@ -59,7 +65,7 @@ class UserController
             $errors['email'] = 'Некорректный email.';
         }
 
-        // Проверка поля password, -> проверка на количество символов, -> проверка совпадения паролей
+        // Проверка поля password
         if (empty($data['psw'])) {
             $errors['psw'] = 'Поле "Пароль" обязательно для заполнения.';
         } elseif (strlen($data['psw']) < 3 || strlen($data['psw']) > 255) {
@@ -73,7 +79,7 @@ class UserController
     }
 
     // Функция авторизации
-    public function login()
+    public function login(): void
     {
         session_start(); // Начало сессии для авторизации
 
@@ -103,7 +109,8 @@ class UserController
                         // Успешный вход
                         $_SESSION['userId'] = $user['id'];
                         $_SESSION['userName'] = $user['name'];
-                        echo "OK, " . htmlspecialchars($user['name']) . "!";
+                        header("Location: /my_profile");
+                        exit();
                     } else {
                         $errors['password'] = 'Введен неверный логин или пароль';
                     }
@@ -114,11 +121,12 @@ class UserController
         } else {
             $errors['form'] = 'Заполните форму для входа.';
         }
+
         require_once '../View/get_login.php';
     }
 
     // Выход из текущей сессии
-    public function logout()
+    public function logout(): void
     {
         session_start(); // Начало сессии для выхода
 
@@ -128,10 +136,11 @@ class UserController
 
         // Перенаправьте пользователя на страницу входа или главную страницу
         header('Location: /login');
+        exit();
     }
 
-    // Новый метод для отображения профиля пользователя
-    public function showProfile()
+    // Метод для отображения профиля пользователя
+    public function showProfile(): void
     {
         session_start(); // Начало сессии для отображения профиля
 
@@ -170,7 +179,7 @@ class UserController
             $user = $this->user->getById($userId);
 
             // Вывод сообщения об успешном обновлении профиля
-            echo '<div class="thanks"><h4>Thank you!</h4><p><small>Your profile has been successfully updated.</small></p></div>';
+            echo '<div class="thanks"><h4>Спасибо!</h4><p><small>Ваш профиль успешно обновлен.</small></p></div>';
         }
 
         // Подключение шаблона профиля пользователя

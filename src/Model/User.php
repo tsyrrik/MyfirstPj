@@ -1,5 +1,7 @@
 <?php
-require_once 'Model.php';
+
+namespace Model;
+
 class User extends Model
 {
     public function getByEmail(string $email): array {
@@ -15,7 +17,7 @@ class User extends Model
         $stmt->execute([
             ':name' => $name,
             ':email' => $email,
-            ':password' => password_hash($password, PASSWORD_DEFAULT)
+            ':password' => $password // Пароль уже должен быть хэширован перед вызовом этого метода
         ]);
     }
 
