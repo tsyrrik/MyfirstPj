@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- For icons -->
     <script src="https://kit.fontawesome.com/6bf5f276c4.js" crossorigin="anonymous"></script>
+
     <style>
         .wrapper {
             max-width: 600px;
@@ -69,12 +70,18 @@
     <?php else: ?>
         <?php foreach ($cartItems as $item): ?>
             <div class="cart-item">
-                <input class="chkbx" type="checkbox"/>
-                <img src="<?php echo htmlspecialchars($item['img_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                <?php
+                $imageUrl = isset($item['img_url']) ? htmlspecialchars($item['img_url']) : 'default_image.jpg';
+                ?>
+                <img src="<?php echo $imageUrl; ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
                 <div>
                     <h2><?php echo htmlspecialchars($item['name']); ?></h2>
                     <p>Цена: <?php echo htmlspecialchars($item['price']); ?> руб.</p>
                     <p>Количество: <?php echo htmlspecialchars($item['count']); ?></p>
+                    <form action="/remove-product" method="POST">
+                        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($item['id']); ?>">
+                        <button type="submit">Удалить</button>
+                    </form>
                 </div>
             </div>
         <?php endforeach; ?>

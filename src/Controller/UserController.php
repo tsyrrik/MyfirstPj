@@ -8,6 +8,7 @@ class UserController
 {
     private User $user;
 
+    // Конструктор инициализирует модель User
     public function __construct()
     {
         $this->user = new User();
@@ -126,7 +127,7 @@ class UserController
     }
 
     // Выход из текущей сессии
-    public function logout(): void
+    public function logout()
     {
         session_start(); // Начало сессии для выхода
 
@@ -151,7 +152,10 @@ class UserController
             return;
         }
 
+        // Получение идентификатора пользователя из сессии
         $userId = $_SESSION['userId'];
+
+        // Получение данных пользователя из модели
         $user = $this->user->getById($userId);
 
         if (!$user) {

@@ -8,13 +8,14 @@ class ProductController
 {
     private Product $product;
 
+    // Конструктор инициализирует модель Product
     public function __construct()
     {
         $this->product = new Product();
     }
 
     // Метод для отображения каталога продуктов
-    public function showCatalog()
+    public function showCatalog(): void
     {
         // Начало сессии
         session_start();

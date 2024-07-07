@@ -1,8 +1,8 @@
 <?php
 
-use Controller\CartController;
-use Controller\ProductController;
 use Controller\UserController;
+use Controller\ProductController;
+use Controller\CartController;
 
 // Получаем URI запроса и метод HTTP
 $requestUri = $_SERVER['REQUEST_URI'];
@@ -28,7 +28,7 @@ spl_autoload_register(function ($class) {
             require $file;
             return;
         } else {
-            echo "File not found: $file<br>"; // Добавьте этот вывод для отладки
+            echo "File not found: $file<br>";
         }
     }
 });
@@ -38,8 +38,8 @@ if ($requestUri === '/registration') {
     if ($requestMethod === 'GET') {
         require_once '../View/get_registration.php';
     } elseif ($requestMethod === 'POST') {
-        $obj = new UserController();
-        $obj->registrate();
+        $userController = new UserController();
+        $userController->registrate();
     } else {
         echo "HTTP метод $requestMethod не поддерживается";
     }
@@ -49,22 +49,22 @@ elseif ($requestUri === '/login') {
     if ($requestMethod === 'GET') {
         require_once '../View/get_login.php';
     } elseif ($requestMethod === 'POST') {
-        $obj = new UserController();
-        $obj->login();
+        $userController = new UserController();
+        $userController->login();
     } else {
         echo "HTTP метод $requestMethod не поддерживается";
     }
 }
 // Обработка маршрута для профиля пользователя
 elseif ($requestUri === '/my_profile') {
-    $obj = new UserController();
-    $obj->showProfile();
+    $userController = new UserController();
+    $userController->showProfile();
 }
 // Обработка маршрута для каталога продуктов
 elseif ($requestUri === '/catalog') {
     if ($requestMethod === 'GET') {
-        $product = new ProductController();
-        $product->showCatalog();
+        $productController = new ProductController();
+        $productController->showCatalog();
     } else {
         echo "HTTP метод $requestMethod не поддерживается";
     }
@@ -81,6 +81,15 @@ elseif ($requestUri === '/add-product') {
         echo "HTTP метод $requestMethod не поддерживается";
     }
 }
+// Обработка маршрута для удаления продукта из корзины
+elseif ($requestUri === '/remove-product') {
+    if ($requestMethod === 'POST') {
+        $cartController = new CartController();
+        $cartController->removeProduct();
+    } else {
+        echo "HTTP метод $requestMethod не поддерживается";
+    }
+}
 // Обработка маршрута для отображения корзины
 elseif ($requestUri === '/cart') {
     if ($requestMethod === 'GET') {
@@ -93,8 +102,8 @@ elseif ($requestUri === '/cart') {
 // Обработка маршрута для выхода из системы
 elseif ($requestUri === '/logout') {
     if ($requestMethod === 'GET') {
-        $obj = new UserController();
-        $obj->logout();
+        $userController = new UserController();
+        $userController->logout();
     } else {
         echo "HTTP метод $requestMethod не поддерживается";
     }
