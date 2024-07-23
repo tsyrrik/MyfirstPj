@@ -37,7 +37,7 @@ class UserController
 
                 // Перенаправление на страницу входа
                 header("Location: /login");
-                exit();
+                return;
             }
         }
 
@@ -79,6 +79,17 @@ class UserController
         return $errors;
     }
 
+    // Зачем добавил этот метод для обработки GET запроса, хз не работает без него и ...
+    public function getLogin()
+    {
+        // Подключаем представление для страницы входа
+        require_once '../View/get_login.php';
+    }
+    public function getRegistrate()
+    {
+        // Подключаем представление для страницы входа
+        require_once '../View/get_registration.php';
+    }
     // Функция авторизации
     public function login(): void
     {
@@ -111,7 +122,7 @@ class UserController
                         $_SESSION['userId'] = $user['id'];
                         $_SESSION['userName'] = $user['name'];
                         header("Location: /my_profile");
-                        exit();
+                        return;
                     } else {
                         $errors['password'] = 'Введен неверный логин или пароль';
                     }
@@ -127,7 +138,7 @@ class UserController
     }
 
     // Выход из текущей сессии
-    public function logout()
+    public function logout(): void
     {
         session_start(); // Начало сессии для выхода
 
@@ -137,7 +148,7 @@ class UserController
 
         // Перенаправьте пользователя на страницу входа или главную страницу
         header('Location: /login');
-        exit();
+        return;
     }
 
     // Метод для отображения профиля пользователя

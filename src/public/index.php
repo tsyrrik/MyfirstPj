@@ -1,31 +1,14 @@
 <?php
 
-use Controller\UserController;
-use Controller\ProductController;
-use Controller\CartController;
-
 // Функция автозагрузки классов
 spl_autoload_register(function ($class) {
-    $prefixes = [
-        'Controller\\' => __DIR__ . '/../Controller/',
-        'Model\\' => __DIR__ . '/../Model/',
-    ];
 
-    foreach ($prefixes as $prefix => $base_dir) {
-        $len = strlen($prefix);
-        if (strncmp($prefix, $class, $len) !== 0) {
-            continue;
-        }
+    $file = __DIR__ . '/../' . str_replace('\\', '/', $class) . '.php';
 
-        $relative_class = substr($class, $len);
-        $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-
-        if (file_exists($file)) {
-            require $file;
-            return;
-        } else {
-            echo "File not found: $file<br>";
-        }
+    if (file_exists($file)) {
+        require $file;
+    } else {
+        echo "File not found: $file<br>";
     }
 });
 

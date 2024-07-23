@@ -119,7 +119,7 @@ class CartController
         if ($productId) {
             $this->userProduct->delete($userId, $productId); // Удаление продукта из корзины
             header('Location: /cart'); // Перенаправление на страницу корзины
-            exit();
+            return; // Возвращаем управление, прерывая выполнение метода
         } else {
             echo "Неверный идентификатор продукта.";
         }
