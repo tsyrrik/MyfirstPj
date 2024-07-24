@@ -11,10 +11,11 @@
 
         a {
             text-decoration: none;
+            margin: 0 10px;
         }
 
         a:hover {
-            text-decoration: none;
+            text-decoration: underline;
         }
 
         h3 {
@@ -25,6 +26,10 @@
             max-width: 16rem;
             margin: 10px;
             display: inline-block;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .card:hover {
@@ -47,6 +52,22 @@
             font-size: 18px;
             background-color: white;
         }
+
+        .card-img-top {
+            max-width: 100px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .card-deck {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -65,16 +86,9 @@
                         Hit!
                     </div>
                     <?php
-                    $image_url = isset($product['image_url']) ? htmlspecialchars($product['image_url']) : 'default_image.jpg';
-                    echo '<p>Image URL: ' . $image_url . '</p>'; // Отладочная информация
-
-                    // Проверка существования файла изображения
-                    $full_image_path = __DIR__ . '/../images/' . basename($image_url);
-                    if (!file_exists($full_image_path)) {
-                        $image_url = 'default_image.jpg'; // Изображение по умолчанию, если файла нет
-                    }
+                    $image_url = isset($product['img_url']) ? htmlspecialchars($product['img_url']) : 'default_image.jpg';
                     ?>
-                    <img class="card-img-top" src="/images/<?php echo basename($image_url); ?>" alt="Card image">
+                    <img class="card-img-top" src="<?php echo $image_url; ?>" alt="Card image">
                     <div class="card-body">
                         <p class="card-text text-muted"><?php echo htmlspecialchars($product['description']); ?></p>
                         <a href="#"><h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5></a>
