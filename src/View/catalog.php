@@ -93,7 +93,17 @@
                         <p class="card-text text-muted"><?php echo htmlspecialchars($product['description']); ?></p>
                         <a href="#"><h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5></a>
                         <div class="card-footer">
-                            <?php echo htmlspecialchars($product['price']); ?>$
+                            Цена: <?php echo htmlspecialchars($product['price']); ?>$
+                            <br>
+                            В корзине: <?php echo htmlspecialchars($product['count']); ?>
+                            <form action="/add-product" method="POST">
+                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
+                                <button type="submit">Добавить</button>
+                            </form>
+                            <form action="/decrease-product" method="POST" style="display: inline;">
+                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
+                                <button type="submit">Уменьшить</button>
+                            </form>
                         </div>
                     </div>
                 </a>

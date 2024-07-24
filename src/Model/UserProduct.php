@@ -30,17 +30,22 @@ class UserProduct extends Model
         }
         return true;
     }
+    public function getProductCount(int $userId, int $productId): int
+    {
+        $stmt = $this->pdo->prepare("SELECT count FROM user_products WHERE user_id = :user_id AND product_id = :product_id");
+        $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        return $result ? (int)$result['count'] : 0;
+    }
+    public function updateProductCount(int $userId, int $productId, int $newCount): bool
+    {
+        $stmt = $this->pdo->prepare("UPDATE user_products SET count = :count WHERE user_id = :user_id AND product_id = :product_id");
+        return $stmt->execute(['count' => $newCount, 'user_id' => $userId, 'product_id' => $productId]);
+    }
     public function delete(int $userId, int $productId): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :user_id AND product_id = :product_id");
         $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
-    }
-
-    public function productExists(int $productId): bool
-    {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM products WHERE id = :product_id");
-        $stmt->execute(['product_id' => $productId]);
-        return $stmt->fetchColumn() > 0;
     }
 }

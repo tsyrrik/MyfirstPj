@@ -3,15 +3,18 @@
 namespace Controller;
 
 use Model\Product;
+use Model\UserProduct;
 
 class ProductController
 {
     private Product $product;
+    private UserProduct $userProduct;
 
-    // Конструктор инициализирует модель Product
+    // Конструктор инициализирует модели Product и UserProduct
     public function __construct()
     {
         $this->product = new Product();
+        $this->userProduct = new UserProduct();
     }
 
     // Метод для отображения каталога продуктов
@@ -22,8 +25,15 @@ class ProductController
 
         // Проверка, авторизован ли пользователь
         if (isset($_SESSION['userId'])) {
+            $userId = $_SESSION['userId'];
+
             // Получение списка продуктов из модели
             $products = $this->product->getAllProducts();
+
+            // Добавление количества продуктов в корзине для каждого продукта
+            foreach ($products as &$product) {
+                $product['count'] = $this->userProduct->getProductCount($userId, $product['id']);
+            }
 
             // Подключение файла с каталогом продуктов и передача данных
             require_once __DIR__ . '/../View/catalog.php';

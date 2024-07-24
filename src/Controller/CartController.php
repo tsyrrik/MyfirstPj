@@ -55,8 +55,8 @@ class CartController
         $userId = $_SESSION['userId'];
 
         // Получение идентификатора продукта и количества из POST-запроса
-        $productId = filter_input(INPUT_POST, 'product_id', FILTER_VALIDATE_INT);
-        $count = filter_input(INPUT_POST, 'count', FILTER_VALIDATE_INT);
+        $productId = $_POST['productId'];
+        $count = 1; // Устанавливаем количество по умолчанию
 
         // Валидация входных данных
         $errors = $this->validateAddProduct($userId, $productId, $count);
@@ -96,7 +96,56 @@ class CartController
         }
         return $errors;
     }
+    // Метод уменьшения количества продукта
+    public function decreaseProduct(): void
+    {
+        session_start();
 
+        if (!isset($_SESSION['userId'])) {
+            http_response_code(403);
+            require_once '../View/403.php';
+            return;
+        }
+
+        $userId = $_SESSION['userId'];
+        $productId = $_POST['productId'];
+
+        $errors = $this->validateDecreaseProduct($userId, $productId);
+
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                echo $error . '<br>';
+            }
+            return;
+        }
+
+        $currentCount = $this->userProduct->getProductCount($userId, $productId);
+        if ($currentCount > 0) {
+            $newCount = $currentCount - 1;
+
+            if ($newCount > 0) {
+                $this->userProduct->updateProductCount($userId, $productId, $newCount);
+                echo "Количество продукта уменьшено на 1.";
+            } else {
+                $this->userProduct->delete($userId, $productId);
+                echo "Продукт удален из корзины.";
+            }
+        } else {
+            echo "Продукт не найден в корзине.";
+        }
+    }
+
+    private function validateDecreaseProduct($userId, $productId): array
+    {
+        $errors = [];
+        if ($userId <= 0) {
+            $errors[] = "Неверный идентификатор пользователя";
+        }
+        if ($productId <= 0) {
+            $errors[] = "Неверный идентификатор продукта";
+        }
+        return $errors;
+    }
     // Метод удаления продукта из корзины
     public function removeProduct(): void
     {

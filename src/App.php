@@ -50,6 +50,12 @@ class App
                 'method' => 'addProduct',
             ]
         ],
+        '/decrease-product' => [
+            'POST' => [
+                'class' => CartController::class,
+                'method' => 'decreaseProduct',
+            ]
+        ],
         '/remove-product' => [
             'POST' => [
                 'class' => CartController::class,
