@@ -56,8 +56,7 @@ class CartController
 
         // Получение идентификатора продукта и количества из POST-запроса
         $productId = $_POST['productId'];
-        $count = 1; // Устанавливаем количество по умолчанию
-
+        $count = isset($_POST['count']) ? intval($_POST['count']) : 1;
         // Валидация входных данных
         $errors = $this->validateAddProduct($userId, $productId, $count);
 
@@ -96,7 +95,45 @@ class CartController
         }
         return $errors;
     }
-    // Метод уменьшения количества продукта
+    // Метод увеличения количества продукта на 1
+    public function increaseProduct(): void
+    {
+        session_start();
+
+        if (!isset($_SESSION['userId'])) {
+            http_response_code(403);
+            require_once '../View/403.php';
+            return;
+        }
+
+        $userId = $_SESSION['userId'];
+        $productId = $_POST['productId'];
+
+        $errors = $this->validateIncreaseProduct($userId, $productId);
+
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                echo $error . '<br>';
+            }
+            return;
+        }
+
+        $currentCount = $this->userProduct->getProductCount($userId, $productId);
+        $newCount = $currentCount + 1;
+        $this->userProduct->updateProductCount($userId, $productId, $newCount);
+
+        echo "Количество продукта увеличено на 1.";
+    }
+
+    private function validateIncreaseProduct($userId, $productId): array
+    {
+        $errors = [];
+        if ($productId <= 0) {
+            $errors[] = "Неверный идентификатор продукта";
+        }
+        return $errors;
+    }
+    // Метод уменьшения количества продукта на 1
     public function decreaseProduct(): void
     {
         session_start();
@@ -138,9 +175,7 @@ class CartController
     private function validateDecreaseProduct($userId, $productId): array
     {
         $errors = [];
-        if ($userId <= 0) {
-            $errors[] = "Неверный идентификатор пользователя";
-        }
+
         if ($productId <= 0) {
             $errors[] = "Неверный идентификатор продукта";
         }

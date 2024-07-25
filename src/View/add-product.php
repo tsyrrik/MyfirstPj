@@ -9,11 +9,11 @@
         <p>Please fill in this form to add a product to the cart.</p>
         <hr>
 
-        <label for="product_id"><b>Product ID</b></label>
-        <?php if (isset($errors['product_id'])): ?>
-            <label><?php echo $errors['product_id']; ?></label>
+        <label for="productId"><b>Product ID</b></label>
+        <?php if (isset($errors['productId'])): ?>
+            <label><?php echo $errors['productId']; ?></label>
         <?php endif; ?>
-        <input type="text" placeholder="Product ID" name="product_id" id="product_id" required>
+        <input type="text" placeholder="Product ID" name="productId" id="productId" required>
 
         <label for="count"><b>Count</b></label>
         <?php if (isset($errors['count'])): ?>
@@ -33,12 +33,10 @@
 <style>
     * {box-sizing: border-box}
 
-    /* Add padding to containers */
     .container {
         padding: 16px;
     }
 
-    /* Full-width input fields */
     input[type=text], input[type=password] {
         width: 100%;
         padding: 15px;
@@ -53,13 +51,11 @@
         outline: none;
     }
 
-    /* Overwrite default styles of hr */
     hr {
         border: 1px solid #f1f1f1;
         margin-bottom: 25px;
     }
 
-    /* Set a style for the submit/register button */
     .registerbtn {
         background-color: #04AA6D;
         color: white;
@@ -72,15 +68,13 @@
     }
 
     .registerbtn:hover {
-        opacity:1;
+        opacity: 1;
     }
 
-    /* Add a blue text color to links */
     a {
         color: dodgerblue;
     }
 
-    /* Set a grey background color and center the text of the "sign in" section */
     .signin {
         background-color: #f1f1f1;
         text-align: center;

@@ -95,14 +95,20 @@
                         <div class="card-footer">
                             Цена: <?php echo htmlspecialchars($product['price']); ?>$
                             <br>
-                            В корзине: <?php echo htmlspecialchars($product['count']); ?>
-                            <form action="/add-product" method="POST">
+                            Итого : <?php echo htmlspecialchars($product['count']); ?>
+                            <form action="/add-product" method="POST" style="display: inline;">
                                 <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
+                                <label for="count">Количество:</label>
+                                <input type="number" name="count" value="1" min="1" required>
                                 <button type="submit">Добавить</button>
+                            </form>
+                            <form action="/increase-product" method="POST" style="display: inline;">
+                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
+                                <button type="submit">Увеличить на 1</button>
                             </form>
                             <form action="/decrease-product" method="POST" style="display: inline;">
                                 <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
-                                <button type="submit">Уменьшить</button>
+                                <button type="submit">Уменьшить на 1</button>
                             </form>
                         </div>
                     </div>
