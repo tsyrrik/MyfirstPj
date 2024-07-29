@@ -6,12 +6,16 @@ class UserProduct extends Model
 {
     public function getProductsByUserId(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT p.id, p.name, p.description, p.price, up.count, p.img_url 
-                                     FROM products p 
-                                     JOIN user_products up ON p.id = up.product_id 
-                                     WHERE up.user_id = :user_id");
+        $stmt = $this->pdo->prepare("SELECT product_id, count FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $userId]);
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $userProducts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($userProducts as $userProduct) {
+            $products[$userProduct['product_id']] = $userProduct['count'];
+        }
+
+        return $products;
     }
 
     public function addProductToCart(int $userId, int $productId, int $count): bool

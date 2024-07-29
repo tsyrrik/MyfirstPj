@@ -33,10 +33,25 @@ class CartController
         $userId = $_SESSION['userId'];
 
         // Получение продуктов в корзине пользователя
-        $cartItems = $this->userProduct->getProductsByUserId($userId);
+        $cartItems = $this->getProductsWithCounts($userId);
 
         // Подключение представления корзины
         require_once '../View/cart.php';
+    }
+
+    private function getProductsWithCounts(int $userId): array
+    {
+        $products = $this->product->getAll();
+        $userProducts = $this->userProduct->getProductsByUserId($userId);
+        $productsWithCounts = [];
+
+        foreach ($products as $product) {
+            $productId = $product['id'];
+            $product['count'] = $userProducts[$productId] ?? 0;
+            $productsWithCounts[] = $product;
+        }
+
+        return $productsWithCounts;
     }
 
     // Метод добавления продукта в корзину
