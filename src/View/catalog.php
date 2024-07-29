@@ -79,42 +79,45 @@
 <div class="container">
     <h3>Catalog</h3>
     <div class="card-deck">
-        <?php foreach ($products as $product): ?>
-            <div class="card text-center">
-                <a href="#">
-                    <div class="card-header">
-                        Hit!
-                    </div>
-                    <?php
-                    $image_url = isset($product['img_url']) ? htmlspecialchars($product['img_url']) : 'default_image.jpg';
-                    ?>
-                    <img class="card-img-top" src="<?php echo $image_url; ?>" alt="Card image">
-                    <div class="card-body">
-                        <p class="card-text text-muted"><?php echo htmlspecialchars($product['description']); ?></p>
-                        <a href="#"><h5 class="card-title"><?php echo htmlspecialchars($product['name']); ?></h5></a>
-                        <div class="card-footer">
-                            Цена: <?php echo htmlspecialchars($product['price']); ?>$
-                            <br>
-                            Итого : <?php echo htmlspecialchars($product['count']); ?>
-                            <form action="/add-product" method="POST" style="display: inline;">
-                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
-                                <label for="count">Количество:</label>
-                                <input type="number" name="count" value="1" min="1" required>
-                                <button type="submit">Добавить</button>
-                            </form>
-                            <form action="/increase-product" method="POST" style="display: inline;">
-                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
-                                <button type="submit">Увеличить на 1</button>
-                            </form>
-                            <form action="/decrease-product" method="POST" style="display: inline;">
-                                <input type="hidden" name="productId" value="<?php echo htmlspecialchars($product['id']); ?>">
-                                <button type="submit">Уменьшить на 1</button>
-                            </form>
+        <?php if (!empty($products)): ?>
+            <?php foreach ($products as $product): ?>
+                <div class="card text-center">
+                    <a href="#">
+                        <div class="card-header">
+                            Hit!
                         </div>
-                    </div>
-                </a>
-            </div>
-        <?php endforeach; ?>
+                        <?php
+                        $img_url = is_array($product['img_url']) ? $product['img_url'][0] : $product['img_url'];
+                        $image_url = htmlspecialchars($img_url ?? 'default_image.jpg');
+                        ?>
+                        <img class="card-img-top" src="<?= $image_url; ?>" alt="Card image">
+                        <div class="card-body">
+                            <p class="card-text text-muted"><?= htmlspecialchars($product['description'] ?? ''); ?></p>
+                            <a href="#"><h5 class="card-title"><?= htmlspecialchars($product['name'] ?? ''); ?></h5></a>
+                            <div class="card-footer">
+                                Цена: <?= htmlspecialchars($product['price'] ?? '0'); ?>$
+                                <br>
+                                <?php
+                                $count = is_array($product['count']) ? $product['count']['count'] : $product['count'];
+                                ?>
+                                Количество: <?= htmlspecialchars((string)($count ?? '0')); ?>
+
+                                <form action="/increase-product" method="POST" style="display: inline;">
+                                    <input type="hidden" name="productId" value="<?= htmlspecialchars((string)($product['id'] ?? '')); ?>">
+                                    <button type="submit">Увеличить на 1</button>
+                                </form>
+                                <form action="/decrease-product" method="POST" style="display: inline;">
+                                    <input type="hidden" name="productId" value="<?= htmlspecialchars((string)($product['id'] ?? '')); ?>">
+                                    <button type="submit">Уменьшить на 1</button>
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>В каталоге нет товаров.</p>
+        <?php endif; ?>
     </div>
 </div>
 </body>

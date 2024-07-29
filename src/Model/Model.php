@@ -5,7 +5,7 @@ namespace Model;
 class Model
 {
     // Свойство для хранения экземпляра PDO
-    public \PDO $pdo;
+    protected \PDO $pdo;
 
     // Конструктор устанавливает соединение с базой данных PostgreSQL
     public function __construct()

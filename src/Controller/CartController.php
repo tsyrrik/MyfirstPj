@@ -90,7 +90,7 @@ class CartController
         if ($count <= 0) {
             $errors[] = "Неверное количество продукта";
         }
-        if (!$this->product->productExists($productId)) {
+        if (!$this->product->exists($productId)) {
             $errors[] = "Продукт с данным идентификатором не существует";
         }
         return $errors;
@@ -109,30 +109,38 @@ class CartController
         $userId = $_SESSION['userId'];
         $productId = $_POST['productId'];
 
-        $errors = $this->validateIncreaseProduct($userId, $productId);
+        $errors = $this->validateIncreaseProduct($_POST);
 
         if (!empty($errors)) {
-            foreach ($errors as $error) {
-                echo $error . '<br>';
-            }
-            return;
+            $_SESSION['errors'] = $errors;
+            header('Location: /catalog'); // Перенаправление на страницу каталога
         }
 
-        $currentCount = $this->userProduct->getProductCount($userId, $productId);
-        $newCount = $currentCount + 1;
-        $this->userProduct->updateProductCount($userId, $productId, $newCount);
+        $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
 
-        echo "Количество продукта увеличено на 1.";
+        if ($existingProduct) {
+            $this->userProduct->increaseProductCount($userId, $productId);
+        } else {
+            $this->userProduct->addProductToCart($userId, $productId, 1);
+        }
+
+        $_SESSION['success'] = "Количество продукта увеличено на 1.";
+        header('Location: /catalog');
     }
 
-    private function validateIncreaseProduct($userId, $productId): array
+    private function validateIncreaseProduct(array $data): array
     {
         $errors = [];
+        $productId = isset($data['productId']) ? intval($data['productId']) : 0;
         if ($productId <= 0) {
             $errors[] = "Неверный идентификатор продукта";
         }
+        if (!$this->product->exists($productId)) {
+            $errors[] = "Продукт с данным идентификатором не существует";
+        }
         return $errors;
     }
+
     // Метод уменьшения количества продукта на 1
     public function decreaseProduct(): void
     {
@@ -147,40 +155,45 @@ class CartController
         $userId = $_SESSION['userId'];
         $productId = $_POST['productId'];
 
-        $errors = $this->validateDecreaseProduct($userId, $productId);
+        $errors = $this->validateDecreaseProduct($_POST, $userId);
 
         if (!empty($errors)) {
-            foreach ($errors as $error) {
-                echo $error . '<br>';
-            }
-            return;
+            $_SESSION['errors'] = $errors;
+            header('Location: /catalog'); // Перенаправление на страницу каталога
+            exit;
         }
 
-        $currentCount = $this->userProduct->getProductCount($userId, $productId);
-        if ($currentCount > 0) {
-            $newCount = $currentCount - 1;
+        $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
 
-            if ($newCount > 0) {
-                $this->userProduct->updateProductCount($userId, $productId, $newCount);
-                echo "Количество продукта уменьшено на 1.";
-            } else {
-                $this->userProduct->delete($userId, $productId);
-                echo "Продукт удален из корзины.";
-            }
+        if ($existingProduct && $existingProduct['count'] > 1) {
+            $this->userProduct->decreaseProductCount($userId, $productId);
+            $_SESSION['success'] = "Количество продукта уменьшено на 1.";
+        } elseif ($existingProduct && $existingProduct['count'] == 1) {
+            $this->userProduct->delete($userId, $productId);
+            $_SESSION['success'] = "Продукт удален из корзины.";
         } else {
-            echo "Продукт не найден в корзине.";
+            $_SESSION['errors'][] = "Количество продукта не может быть меньше 0.";
         }
-    }
 
-    private function validateDecreaseProduct($userId, $productId): array
+        header('Location: /catalog');
+    }
+    private function validateDecreaseProduct(array $data, int $userId): array
     {
         $errors = [];
-
+        $productId = isset($data['productId']) ? intval($data['productId']) : 0;
         if ($productId <= 0) {
             $errors[] = "Неверный идентификатор продукта";
         }
+        if (!$this->product->exists($productId)) {
+            $errors[] = "Продукт с данным идентификатором не существует";
+        }
+        $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
+        if ($existingProduct === null || $existingProduct['count'] <= 0) {
+            $errors[] = "Количество продукта не может быть меньше 0.";
+        }
         return $errors;
     }
+
     // Метод удаления продукта из корзины
     public function removeProduct(): void
     {
@@ -213,7 +226,7 @@ class CartController
     public function getAddProductForm(): void
     {
         // Получение всех продуктов из базы данных
-        $products = $this->product->getAllProducts();
+        $products = $this->product->getAll();
 
         // Подключение представления формы добавления продукта
         require_once __DIR__ . '/../View/add-product.php';

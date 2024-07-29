@@ -26,7 +26,7 @@ class UserController
             $password = filter_input(INPUT_POST, 'psw', FILTER_SANITIZE_SPECIAL_CHARS);
 
             // Проверка существования email
-            if ($this->user->checkEmailExists($email)) {
+            if ($this->user->getByEmail($email)) {
                 $errors['email'] = 'Пользователь с таким email уже существует.';
             } else {
                 // Хеширование пароля

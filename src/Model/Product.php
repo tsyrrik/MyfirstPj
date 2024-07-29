@@ -5,7 +5,7 @@ namespace Model;
 class Product extends Model
 {
     // Метод для получения всех продуктов
-    public function getAllProducts(): array
+    public function getAll(): array
     {
         // Выполняем SQL-запрос для получения всех записей из таблицы products
         $stmt = $this->pdo->query("SELECT * FROM products");
@@ -14,7 +14,7 @@ class Product extends Model
     }
 
     // Проверка существования продукта по product_Id
-    public function productExists(int $productId): bool
+    public function exists(int $productId): bool
     {
         // Подготавливаем SQL-запрос для проверки существования записи с указанным product_id
         $stmt = $this->pdo->prepare("SELECT 1 FROM products WHERE id = :product_id");
