@@ -168,7 +168,7 @@ class CartController
         if ($existingProduct && $existingProduct['count'] > 1) {
             $this->userProduct->decreaseProductCount($userId, $productId);
             $_SESSION['success'] = "Количество продукта уменьшено на 1.";
-        } elseif ($existingProduct && $existingProduct['count'] == 1) {
+        } elseif ($existingProduct && $existingProduct['count'] === 1) {
             $this->userProduct->delete($userId, $productId);
             $_SESSION['success'] = "Продукт удален из корзины.";
         } else {

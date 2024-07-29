@@ -28,7 +28,7 @@ class ProductController
                 $userProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $product['id']);
                 $product['count'] = $userProduct['count'] ?? 0;
             }
-
+            unset($product);
             // Передача данных в представление
             require_once __DIR__ . '/../View/catalog.php';
         } else {
