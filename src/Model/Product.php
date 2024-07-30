@@ -23,4 +23,19 @@ class Product extends Model
         // Возвращаем true, если запись найдена, иначе false
         return (bool) $stmt->fetchColumn();
     }
+    // Метод для получения продуктов по массиву идентификаторов
+    public function getProductsByIds(array $productIds): array
+    {
+        // Создаем строку с плейсхолдерами для IN-условия
+        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+
+        // Подготавливаем SQL-запрос с IN-условием
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
+
+        // Выполняем запрос с переданными идентификаторами продуктов
+        $stmt->execute($productIds);
+
+        // Возвращаем найденные записи в виде ассоциативного массива
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

@@ -41,8 +41,14 @@ class CartController
 
     private function getProductsWithCounts(int $userId): array
     {
-        $products = $this->product->getAll();
         $userProducts = $this->userProduct->getProductsByUserId($userId);
+        $productIds = array_keys($userProducts);
+
+        if (empty($productIds)) {
+            return [];
+        }
+
+        $products = $this->product->getProductsByIds($productIds);
         $productsWithCounts = [];
 
         foreach ($products as $product) {
@@ -53,7 +59,6 @@ class CartController
 
         return $productsWithCounts;
     }
-
     // Метод добавления продукта в корзину
     public function addProduct(): void
     {
