@@ -23,13 +23,20 @@ class ProductController
         if (isset($_SESSION['userId'])) {
             $userId = $_SESSION['userId'];
             $products = $this->product->getAll();
+            $userProducts = $this->userProduct->getProductsByUserId($userId);
 
-            foreach ($products as &$product) {
-                $userProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $product['id']);
-                $product['count'] = $userProduct['count'] ?? 0;
+            $productCounts = [];
+            foreach ($userProducts as $userProduct) {
+                $productCounts[$userProduct->getProductId()] = $userProduct->getCount();
             }
-            unset($product);
-            // Передача данных в представление
+
+            $productsWithCounts = [];
+            foreach ($products as $product) {
+                $productId = $product->getId();
+                $count = $productCounts[$productId] ?? 0;
+                $productsWithCounts[] = ['product' => $product, 'count' => $count];
+            }
+
             require_once __DIR__ . '/../View/catalog.php';
         } else {
             http_response_code(403);

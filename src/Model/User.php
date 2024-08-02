@@ -5,13 +5,13 @@ namespace Model;
 class User extends Model
 {
     // Метод для получения пользователя по email
-    public function getByEmail(string $email): ?array
+    public function getByEmail(string $email): ?\Entity\User
     {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute(['email' => $email]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return $result ?: null;
+        return $result ? new \Entity\User($result) : null;
     }
 
     // Метод для создания нового пользователя
@@ -28,17 +28,14 @@ class User extends Model
     }
 
     // Метод для получения пользователя по id
-    public function getById(int $id): ?array
+    public function getById(int $id): ?\Entity\User
     {
         // Подготавливаем SQL-запрос для получения пользователя по id
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
-        // Выполняем запрос с переданным параметром id
         $stmt->execute(['id' => $id]);
-        // Получаем результат запроса в виде ассоциативного массива
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        // Возвращаем результат или пустой массив, если пользователь не найден
-        return $result ?: null;
+        return $result ? new \Entity\User($result) : null;
     }
 
     // Метод для обновления данных пользователя

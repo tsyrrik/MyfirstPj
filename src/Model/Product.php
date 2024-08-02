@@ -9,9 +9,16 @@ class Product extends Model
     {
         // Выполняем SQL-запрос для получения всех записей из таблицы products
         $stmt = $this->pdo->query("SELECT * FROM products");
-        // Возвращаем все найденные записи в виде ассоциативного массива
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($result as $data) {
+            $products[] = new \Entity\Product($data);
+        }
+
+        return $products;
     }
+
 
     // Проверка существования продукта по product_Id
     public function exists(int $productId): bool
@@ -35,7 +42,13 @@ class Product extends Model
         // Выполняем запрос с переданными идентификаторами продуктов
         $stmt->execute($productIds);
 
-        // Возвращаем найденные записи в виде ассоциативного массива
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($result as $data) {
+            $products[] = new \Entity\Product($data);
+        }
+
+        return $products;
     }
 }

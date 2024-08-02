@@ -1,6 +1,5 @@
 <a href="/catalog">Catalog</a>
 <a href="/cart">Cart</a>
-<a href="/add-product">Add product</a>
 <a href="/logout">Logout</a>
 
 <!DOCTYPE html>
@@ -154,21 +153,21 @@
     <div class="form-group">
         <label for="name">Name:</label>
         <div class="relative">
-            <input class="form-control" id="name" name="name" type="text" pattern="[a-zA-Z\s]+" required="" autofocus="" title="Name should only contain letters." autocomplete="" placeholder="Type your name here..." value="<?php echo htmlspecialchars($user['name'] ?? ''); ?>">
+            <input class="form-control" id="name" name="name" type="text" pattern="[a-zA-Z\s]+" required="" autofocus="" title="Name should only contain letters." autocomplete="" placeholder="Type your name here..." value="<?php echo htmlspecialchars($user->getName() ?? ''); ?>">
             <i class="fa fa-user"></i>
         </div>
     </div>
     <div class="form-group">
         <label for="last_name">Last Name:</label>
         <div class="relative">
-            <input class="form-control" id="last_name" name="last_name" type="text" pattern="[a-zA-Z\s]+" required="" title="Last name should only contain letters." autocomplete="" placeholder="Type your last name here..." value="<?php echo htmlspecialchars($user['last_name'] ?? ''); ?>">
+            <input class="form-control" id="last_name" name="last_name" type="text" pattern="[a-zA-Z\s]+" required="" title="Last name should only contain letters." autocomplete="" placeholder="Type your last name here..." value="<?php echo htmlspecialchars($user->getLastName() ?? ''); ?>">
             <i class="fa fa-user"></i>
         </div>
     </div>
     <div class="form-group">
         <label for="email">Email address:</label>
         <div class="relative">
-            <input class="form-control" id="email" name="email" type="email" required="" placeholder="Type your email address..." pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>">
+            <input class="form-control" id="email" name="email" type="email" required="" placeholder="Type your email address..." pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" value="<?php echo htmlspecialchars($user->getEmail() ?? ''); ?>">
             <i class="fa fa-envelope"></i>
         </div>
     </div>

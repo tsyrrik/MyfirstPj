@@ -42,7 +42,7 @@ class CartController
     private function getProductsWithCounts(int $userId): array
     {
         $userProducts = $this->userProduct->getProductsByUserId($userId);
-        $productIds = array_keys($userProducts);
+        $productIds = array_map(fn($userProduct) => $userProduct->getProductId(), $userProducts);
 
         if (empty($productIds)) {
             return [];
@@ -52,9 +52,10 @@ class CartController
         $productsWithCounts = [];
 
         foreach ($products as $product) {
-            $productId = $product['id'];
-            $product['count'] = $userProducts[$productId] ?? 0;
-            $productsWithCounts[] = $product;
+            $productId = $product->getId();
+            $userProduct = array_filter($userProducts, fn($up) => $up->getProductId() === $productId); //n($userProduct) => $userProduct->getProductId() — это анонимная функция, которая принимает один аргумент $userProduct и возвращает результат вызова метода $userProduct->getProductId()
+            $count = !empty($userProduct) ? reset($userProduct)->getCount() : 0;
+            $productsWithCounts[] = ['product' => $product, 'count' => $count];
         }
 
         return $productsWithCounts;
@@ -185,10 +186,10 @@ class CartController
 
         $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
 
-        if ($existingProduct && $existingProduct['count'] > 1) {
+        if ($existingProduct && $existingProduct->getCount() > 1) {
             $this->userProduct->decreaseProductCount($userId, $productId);
             $_SESSION['success'] = "Количество продукта уменьшено на 1.";
-        } elseif ($existingProduct && $existingProduct['count'] === 1) {
+        } elseif ($existingProduct && $existingProduct->getCount() === 1) {
             $this->userProduct->delete($userId, $productId);
             $_SESSION['success'] = "Продукт удален из корзины.";
         } else {
@@ -208,7 +209,7 @@ class CartController
             $errors[] = "Продукт с данным идентификатором не существует";
         }
         $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
-        if ($existingProduct === null || $existingProduct['count'] <= 0) {
+        if ($existingProduct === null || $existingProduct->getCount() <= 0) {
             $errors[] = "Количество продукта не может быть меньше 0.";
         }
         return $errors;

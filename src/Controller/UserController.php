@@ -93,7 +93,7 @@ class UserController
     // Функция авторизации
     public function login(): void
     {
-        session_start(); // Начало сессии для авторизации
+        session_start();
 
         $errors = [];
 
@@ -117,10 +117,10 @@ class UserController
 
                 if ($user) {
                     // Проверка пароля
-                    if (password_verify($password, $user['password'])) {
+                    if (password_verify($password, $user->getPassword())) {
                         // Успешный вход
-                        $_SESSION['userId'] = $user['id'];
-                        $_SESSION['userName'] = $user['name'];
+                        $_SESSION['userId'] = $user->getId();
+                        $_SESSION['userName'] = $user->getName();
                         header("Location: /my_profile");
                         return;
                     } else {
@@ -198,6 +198,6 @@ class UserController
         }
 
         // Подключение шаблона профиля пользователя
-        require_once '../View/my_profile.php';
+        require '../View/my_profile.php';
     }
 }
