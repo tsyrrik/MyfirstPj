@@ -71,15 +71,17 @@
         <?php foreach ($cartItems as $item): ?>
             <div class="cart-item">
                 <?php
-                $imageUrl = isset($item['img_url']) ? htmlspecialchars($item['img_url']) : 'default_image.jpg';
+                $product = $item['product'];
+                $count = $item['count'];
+                $imageUrl = htmlspecialchars($product->getImgUrl() ?? 'default_image.jpg');
                 ?>
-                <img src="<?php echo $imageUrl; ?>" alt="<?php echo htmlspecialchars($item['name']); ?>">
+                <img src="<?= $imageUrl; ?>" alt="<?= htmlspecialchars($product->getName()); ?>">
                 <div>
-                    <h2><?php echo htmlspecialchars($item['name']); ?></h2>
-                    <p>Цена: <?php echo htmlspecialchars($item['price']); ?> руб.</p>
-                    <p>Количество: <?php echo htmlspecialchars($item['count']); ?></p>
+                    <h2><?= htmlspecialchars($product->getName()); ?></h2>
+                    <p>Цена: <?= htmlspecialchars($product->getPrice()); ?> руб.</p>
+                    <p>Количество: <?= htmlspecialchars($count); ?></p>
                     <form action="/remove-product" method="POST">
-                        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($item['id']); ?>">
+                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($product->getId()); ?>">
                         <button type="submit">Удалить</button>
                     </form>
                 </div>

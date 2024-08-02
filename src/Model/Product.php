@@ -9,9 +9,16 @@ class Product extends Model
     {
         // Выполняем SQL-запрос для получения всех записей из таблицы products
         $stmt = $this->pdo->query("SELECT * FROM products");
-        // Возвращаем все найденные записи в виде ассоциативного массива
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($result as $data) {
+            $products[] = new \Entity\Product($data);
+        }
+
+        return $products;
     }
+
 
     // Проверка существования продукта по product_Id
     public function exists(int $productId): bool
@@ -22,5 +29,26 @@ class Product extends Model
         $stmt->execute([':product_id' => $productId]);
         // Возвращаем true, если запись найдена, иначе false
         return (bool) $stmt->fetchColumn();
+    }
+    // Метод для получения продуктов по массиву идентификаторов
+    public function getProductsByIds(array $productIds): array
+    {
+        // Создаем строку с плейсхолдерами для IN-условия
+        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+
+        // Подготавливаем SQL-запрос с IN-условием
+        $stmt = $this->pdo->prepare("SELECT * FROM products WHERE id IN ($placeholders)");
+
+        // Выполняем запрос с переданными идентификаторами продуктов
+        $stmt->execute($productIds);
+
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $products = [];
+        foreach ($result as $data) {
+            $products[] = new \Entity\Product($data);
+        }
+
+        return $products;
     }
 }
