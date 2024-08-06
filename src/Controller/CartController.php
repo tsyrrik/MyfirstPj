@@ -117,14 +117,12 @@ class CartController
         return $errors;
     }
     // Метод увеличения количества продукта на 1
-    public function increaseProduct(): void
+    public function increaseProduct(): string
     {
         session_start();
 
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);
-            require_once '../View/403.php';
-            return;
         }
 
         $userId = $_SESSION['userId'];
@@ -146,7 +144,13 @@ class CartController
         }
 
         $_SESSION['success'] = "Количество продукта увеличено на 1.";
-        header('Location: /catalog');
+
+        $totalProductCount = $this->userProduct->getTotalProductCount($userId);
+        $totalPrice = $this->userProduct->getTotalPrice($userId);
+
+        $result = ['totalProductCount' => $totalProductCount, 'totalPrice' => $totalPrice];
+
+        return json_encode($result);
     }
 
     private function validateIncreaseProduct(array $data): array
@@ -163,14 +167,12 @@ class CartController
     }
 
     // Метод уменьшения количества продукта на 1
-    public function decreaseProduct(): void
+    public function decreaseProduct(): string
     {
         session_start();
 
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);
-            require_once '../View/403.php';
-            return;
         }
 
         $userId = $_SESSION['userId'];
@@ -188,15 +190,18 @@ class CartController
 
         if ($existingProduct && $existingProduct->getCount() > 1) {
             $this->userProduct->decreaseProductCount($userId, $productId);
-            $_SESSION['success'] = "Количество продукта уменьшено на 1.";
         } elseif ($existingProduct && $existingProduct->getCount() === 1) {
             $this->userProduct->delete($userId, $productId);
-            $_SESSION['success'] = "Продукт удален из корзины.";
-        } else {
-            $_SESSION['errors'][] = "Количество продукта не может быть меньше 0.";
         }
 
-        header('Location: /catalog');
+        $_SESSION['success'] = "Количество продукта уменьшено на 1.";
+
+        $totalProductCount = $this->userProduct->getTotalProductCount($userId);
+        $totalPrice = $this->userProduct->getTotalPrice($userId);
+
+        $result = ['totalProductCount' => $totalProductCount, 'totalPrice' => $totalPrice];
+
+        return json_encode($result);
     }
     private function validateDecreaseProduct(array $data, int $userId): array
     {

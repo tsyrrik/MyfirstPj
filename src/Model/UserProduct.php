@@ -60,4 +60,40 @@ class UserProduct extends Model
         $stmt = $this->pdo->prepare("DELETE FROM user_products WHERE user_id = :user_id AND product_id = :product_id");
         return $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
     }
+
+    public function getCount(int $userId)
+    {
+        $stmt = $this->pdo->prepare("SELECT count(*) FROM user_products WHERE user_id = :user_id");
+        return $stmt->execute(['user_id' => $userId]);
+
+        $result = $stmt->fetch();
+
+        if (empty($result)) {
+            return 0;
+        }
+
+        return $result['count'];
+    }
+    public function getTotalProductCount(int $userId): int
+    {
+        $stmt = $this->pdo->prepare("SELECT SUM(count) as total_count FROM user_products WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $result = $stmt->fetch();
+
+        return $result['total_count'] ?? 0;
+    }
+
+    public function getTotalPrice(int $userId): float
+    {
+        $stmt = $this->pdo->prepare("
+            SELECT SUM(up.count * p.price) as total_price
+            FROM user_products up
+            JOIN products p ON up.product_id = p.id
+            WHERE up.user_id = :user_id
+        ");
+        $stmt->execute(['user_id' => $userId]);
+        $result = $stmt->fetch();
+
+        return $result['total_price'] ?? 0.0;
+    }
 }

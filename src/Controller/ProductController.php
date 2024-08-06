@@ -26,8 +26,15 @@ class ProductController
             $userProducts = $this->userProduct->getProductsByUserId($userId);
 
             $productCounts = [];
+            $totalPrice = 0;
             foreach ($userProducts as $userProduct) {
-                $productCounts[$userProduct->getProductId()] = $userProduct->getCount();
+                $productId = $userProduct->getProductId();
+                $count = $userProduct->getCount();
+                $product = $this->product->getProductsByIds([$productId])[0] ?? null;
+                if ($product) {
+                    $productCounts[$productId] = $count;
+                    $totalPrice += $count * $product->getPrice();
+                }
             }
 
             $productsWithCounts = [];
@@ -36,6 +43,8 @@ class ProductController
                 $count = $productCounts[$productId] ?? 0;
                 $productsWithCounts[] = ['product' => $product, 'count' => $count];
             }
+
+            $totalProductCount = array_sum($productCounts);
 
             require_once __DIR__ . '/../View/catalog.php';
         } else {

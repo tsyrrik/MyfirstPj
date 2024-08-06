@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: sans-serif;
@@ -72,7 +73,7 @@
 </head>
 <body>
 <a href="/my_profile">My profile</a>
-<a href="/cart">Cart</a>
+<a href="/cart"><i class="fas fa-shopping-cart"></i> Cart</a>
 <a href="/add-product">Add product</a>
 <a href="/logout">Logout</a>
 
@@ -100,13 +101,13 @@
                                 <br>
                                 Количество: <?= htmlspecialchars($count ?? '0'); ?>
 
-                                <form action="/increase-product" method="POST" style="display: inline;">
+                                <form class="increase-form" onsubmit="return false" method="POST" style="display: inline;">
                                     <input type="hidden" name="productId" value="<?= htmlspecialchars($product->getId() ?? ''); ?>">
-                                    <button type="submit">Увеличить на 1</button>
+                                    <button type="submit">+</button>
                                 </form>
-                                <form action="/decrease-product" method="POST" style="display: inline;">
+                                <form class="decrease-form" onsubmit="return false" method="POST" style="display: inline;">
                                     <input type="hidden" name="productId" value="<?= htmlspecialchars($product->getId() ?? ''); ?>">
-                                    <button type="submit">Уменьшить на 1</button>
+                                    <button type="submit">-</button>
                                 </form>
                             </div>
                         </div>
@@ -117,6 +118,40 @@
             <p>В каталоге нет товаров.</p>
         <?php endif; ?>
     </div>
+    <p>Общее количество продуктов: <span class="product-count"><?= htmlspecialchars($totalProductCount ?? '0'); ?></span> </p>
+    <p>Общая сумма продуктов: <span class="product-price"><?= htmlspecialchars($totalPrice ?? '0'); ?></span>> </p>
 </div>
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+        $('.increase-form').on('submit', function () {
+            $.ajax({
+                type: 'POST',
+                url: "/increase-product",
+                data: $(this).serialize(),
+                success: function (response) {
+                    var result = JSON.parse(response);
+                    $('.product-count').text(result.totalProductCount);
+                    $('.product-price').text(result.totalPrice);
+                }
+            });
+            return false;
+        });
+
+        $('.decrease-form').on('submit', function () {
+            $.ajax({
+                type: 'POST',
+                url: "/decrease-product",
+                data: $(this).serialize(),
+                success: function (response) {
+                    var result = JSON.parse(response);
+                    $('.product-count').text(result.totalProductCount);
+                    $('.product-price').text(result.totalPrice);
+                }
+            });
+            return false;
+        });
+    });
+</script>
