@@ -117,12 +117,14 @@ class CartController
         return $errors;
     }
     // Метод увеличения количества продукта на 1
-    public function increaseProduct(): string
+    public function increaseProduct(): void
     {
         session_start();
 
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);
+            echo json_encode(['error' => 'User not authorized']);
+            exit;
         }
 
         $userId = $_SESSION['userId'];
@@ -131,8 +133,8 @@ class CartController
         $errors = $this->validateIncreaseProduct($_POST);
 
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            header('Location: /catalog'); // Перенаправление на страницу каталога
+            echo json_encode(['errors' => $errors]);
+            exit;
         }
 
         $existingProduct = $this->userProduct->getOneByUserIdAndProductId($userId, $productId);
@@ -143,14 +145,12 @@ class CartController
             $this->userProduct->addProductToCart($userId, $productId, 1);
         }
 
-        $_SESSION['success'] = "Количество продукта увеличено на 1.";
-
         $totalProductCount = $this->userProduct->getTotalProductCount($userId);
         $totalPrice = $this->userProduct->getTotalPrice($userId);
 
         $result = ['totalProductCount' => $totalProductCount, 'totalPrice' => $totalPrice];
 
-        return json_encode($result);
+        echo json_encode($result);
     }
 
     private function validateIncreaseProduct(array $data): array
@@ -167,12 +167,14 @@ class CartController
     }
 
     // Метод уменьшения количества продукта на 1
-    public function decreaseProduct(): string
+    public function decreaseProduct(): void
     {
         session_start();
 
         if (!isset($_SESSION['userId'])) {
             http_response_code(403);
+            echo json_encode(['error' => 'User not authorized']);
+            exit;
         }
 
         $userId = $_SESSION['userId'];
@@ -181,8 +183,7 @@ class CartController
         $errors = $this->validateDecreaseProduct($_POST, $userId);
 
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
-            header('Location: /catalog'); // Перенаправление на страницу каталога
+            echo json_encode(['errors' => $errors]);
             exit;
         }
 
@@ -194,15 +195,14 @@ class CartController
             $this->userProduct->delete($userId, $productId);
         }
 
-        $_SESSION['success'] = "Количество продукта уменьшено на 1.";
-
         $totalProductCount = $this->userProduct->getTotalProductCount($userId);
         $totalPrice = $this->userProduct->getTotalPrice($userId);
 
         $result = ['totalProductCount' => $totalProductCount, 'totalPrice' => $totalPrice];
 
-        return json_encode($result);
+        echo json_encode($result);
     }
+
     private function validateDecreaseProduct(array $data, int $userId): array
     {
         $errors = [];

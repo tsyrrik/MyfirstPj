@@ -119,39 +119,47 @@
         <?php endif; ?>
     </div>
     <p>Общее количество продуктов: <span class="product-count"><?= htmlspecialchars($totalProductCount ?? '0'); ?></span> </p>
-    <p>Общая сумма продуктов: <span class="product-price"><?= htmlspecialchars($totalPrice ?? '0'); ?></span>> </p>
-</div>
+    <p>Общая сумма продуктов: <span class="product-price"><?= htmlspecialchars($totalPrice ?? '0'); ?></span> </p>
 </body>
 </html>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script><script>
     $(document).ready(function () {
-        $('.increase-form').on('submit', function () {
+        function updateCatalog() {
             $.ajax({
-                type: 'POST',
-                url: "/increase-product",
-                data: $(this).serialize(),
-                success: function (response) {
-                    var result = JSON.parse(response);
-                    $('.product-count').text(result.totalProductCount);
-                    $('.product-price').text(result.totalPrice);
+                type: 'GET',
+                url: '/catalog',
+                success: function (data) {
+                    const newCatalogHtml = $(data).find('.card-deck').html();
+                    $('.card-deck').html(newCatalogHtml);
+                    $('.product-count').text($(data).find('.product-count').text());
+                    $('.product-price').text($(data).find('.product-price').text());
+                    bindFormEvents(); // Привязываем события снова для новых элементов
+                },
+                error: function (error) {
+                    console.log('Error updating catalog:', error);
                 }
             });
-            return false;
-        });
+        }
 
-        $('.decrease-form').on('submit', function () {
-            $.ajax({
-                type: 'POST',
-                url: "/decrease-product",
-                data: $(this).serialize(),
-                success: function (response) {
-                    var result = JSON.parse(response);
-                    $('.product-count').text(result.totalProductCount);
-                    $('.product-price').text(result.totalPrice);
-                }
+        function bindFormEvents() {
+            $('.increase-form, .decrease-form').off('submit').on('submit', function () {
+                const form = $(this);
+                const url = form.hasClass('increase-form') ? "/increase-product" : "/decrease-product";
+
+                $.ajax({
+                    type: 'POST',
+                    url,
+                    data: form.serialize(),
+                    success: updateCatalog,  // Обновляем каталог после изменения количества продукта
+                    error: function (error) {
+                        console.log('Error updating product count:', error);
+                    }
+                });
+
+                return false; // Предотвращаем стандартное поведение формы
             });
-            return false;
-        });
+        }
+
+        bindFormEvents(); // Изначальная привязка событий при загрузке страницы
     });
 </script>

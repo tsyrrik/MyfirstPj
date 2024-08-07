@@ -61,24 +61,24 @@ class UserProduct extends Model
         return $stmt->execute(['user_id' => $userId, 'product_id' => $productId]);
     }
 
-    public function getCount(int $userId)
+    public function getCount(int $userId): int
     {
-        $stmt = $this->pdo->prepare("SELECT count(*) FROM user_products WHERE user_id = :user_id");
-        return $stmt->execute(['user_id' => $userId]);
+        $stmt = $this->pdo->prepare("SELECT count(*) as total_count FROM user_products WHERE user_id = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        $result = $stmt->fetch();
-
-        if (empty($result)) {
+        if (empty($result) || !isset($result['total_count'])) {
             return 0;
         }
 
-        return $result['count'];
+        return (int) $result['total_count'];
     }
+
     public function getTotalProductCount(int $userId): int
     {
         $stmt = $this->pdo->prepare("SELECT SUM(count) as total_count FROM user_products WHERE user_id = :user_id");
         $stmt->execute(['user_id' => $userId]);
-        $result = $stmt->fetch();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $result['total_count'] ?? 0;
     }
@@ -92,7 +92,7 @@ class UserProduct extends Model
             WHERE up.user_id = :user_id
         ");
         $stmt->execute(['user_id' => $userId]);
-        $result = $stmt->fetch();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return $result['total_price'] ?? 0.0;
     }
